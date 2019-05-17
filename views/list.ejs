@@ -15,13 +15,13 @@
     </div>
 
     <div class="box">
-        <% for(let i = 0; i < newListItems.length; i++) { %>
-        <div class="item">
-            <input type="checkbox" name="" id="">
-            <p> <%= newListItems[i] %> </p>
-        </div>
-        <% } %>
-
+        
+        <% newListItems.forEach( (item) => { %>
+            <div class="item">
+                <input type="checkbox" name="" id="">
+                <p> <%= item.name %> </p>
+            </div>
+        <% }); %>
 
         <form action="/" method="post" class="item">
             <input type="text" name="newItem" placeholder="New Item To Add" autocomplete="off">
