@@ -1,4 +1,4 @@
-/////// template for starting any node project ////////////////
+/////// template for starting any node project //////////////////////////////////////////////////////
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -7,10 +7,12 @@ const app = express();
 
 let items = ["Buy Food", "Cook Food", "Eat Food"];
 let daysOfTheWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+let day, today, toDay, options;
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.set('view engine', 'ejs');
 
 mongoose.connect("mongodb://localhost:27017/todolistDB", { useNewUrlParser: true });
 
@@ -28,61 +30,76 @@ const item3 = new Item({
 
 const defaultItems = [item1, item2, item3];
 
-// C  - as in C RUD
-mongoose.connection.collections.items.drop();
+// // C  - as in C RUD
+// mongoose.connection.collections.items.drop();
 
-Item.insertMany(defaultItems, (err) => {
-    if (err) {
-        console.log(err)
-    } else {
-        console.log("Successfully saved all the items.")
-    }
-});
-
-// // R - as in CRUD
-// Item.find({},(err, items) => {
+// Item.insertMany(defaultItems, (err) => {
 //     if (err) {
-//         console.log(err);
+//         console.log(err)
 //     } else {
-//         mongoose.connection.close();
-//         items.forEach( (item) => {
-//         console.log(item.name);
-//         });
+//         console.log("Successfully saved all the items to DB.")
 //     }
-// })
+// });
 
-app.set('view engine', 'ejs');
-
-app.get("/", (req, res) => {
-
-    
-    // R - as in CRUD
-    Item.find({}, (err, _items) => {
-        if (err) {
-            console.log(err);
-        } else {
-            items = _items;
-            mongoose.connection.close();
-            items.forEach((item) => {
-                console.log(item.name);
-            });
-        }
-    });
-
-
-    let today = new Date();
-
-    let toDay = `Today's date is ${daysOfTheWeek[today.getDay()]} `;
-
-    let options = {
+function setDate() {
+    today = new Date();
+    toDay = `Today's date is ${daysOfTheWeek[today.getDay()]} `;
+    options = {
         weekday: "long",
         day: "numeric",
         month: "long"
     };
 
-    let day = today.toLocaleDateString("en-US", options);
+    day = today.toLocaleDateString("en-US", options);
 
-    res.render("list", { kindOfDay: day, newListItems: items, toDay: toDay });
+}
+app.get("/", (req, res) => {
+
+    setDate();
+
+    // Item.find({}, (err, foundItems) => {
+    //     if (foundItems.length > 0) {
+    //         mongoose.connection.collections.items.drop();
+    //         Item.insertMany(defaultItems, (err) => {
+    //             if (err) {
+    //                 console.log(err)
+    //             } else {
+    //                 console.log("Successfully saved all the items to DB.")
+    //             }
+    //         });
+    //     }
+    // });
+
+    Item.find({}, (err, foundItems) => {
+        if (foundItems.length === 0) {
+            Item.insertMany(defaultItems, (err) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log("Successfully saved all the items to DB.")
+                }
+            });
+            res.redirect("/");
+        } else {
+            res.render("list", { kindOfDay: day, newListItems: foundItems, toDay: toDay });
+        }
+    });
+
+   
+    // // R - as in CRUD
+    // Item.find({}, (err, result) => {
+    //     if (err) {
+    //         console.log(err);
+    //     } else {
+    //         items = result;
+    //         mongoose.connection.close();
+    //         items.forEach((item) => {
+    //             console.log(item.name);
+    //         });
+    //     }
+    //     res.render("list", { kindOfDay: day, newListItems: items, toDay: toDay });
+    // });
+
 
 });
 
@@ -92,6 +109,6 @@ app.post("/", (req, res) => {
     res.redirect("/");
 });
 
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log("server started on port 3000 ...")
 });
