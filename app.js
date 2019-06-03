@@ -57,19 +57,6 @@ app.get("/", (req, res) => {
 
     setDate();
 
-    // Item.find({}, (err, foundItems) => {
-    //     if (foundItems.length > 0) {
-    //         mongoose.connection.collections.items.drop();
-    //         Item.insertMany(defaultItems, (err) => {
-    //             if (err) {
-    //                 console.log(err)
-    //             } else {
-    //                 console.log("Successfully saved all the items to DB.")
-    //             }
-    //         });
-    //     }
-    // });
-
     Item.find({}, (err, foundItems) => {
         if (foundItems.length === 0) {
             Item.insertMany(defaultItems, (err) => {
@@ -84,22 +71,6 @@ app.get("/", (req, res) => {
             res.render("list", { kindOfDay: day, newListItems: foundItems, toDay: toDay });
         }
     });
-
-   
-    // // R - as in CRUD
-    // Item.find({}, (err, result) => {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         items = result;
-    //         mongoose.connection.close();
-    //         items.forEach((item) => {
-    //             console.log(item.name);
-    //         });
-    //     }
-    //     res.render("list", { kindOfDay: day, newListItems: items, toDay: toDay });
-    // });
-
 
 });
 
