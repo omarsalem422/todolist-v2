@@ -50,7 +50,8 @@ function setDate() {
         month: "long"
     };
 
-    day = today.toLocaleDateString("en-US", options);
+    //day = today.toLocaleDateString("en-US", options);
+    day = "Today";
 
 }
 app.get("/", (req, res) => {
@@ -75,8 +76,16 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-    let item = req.body.newItem;
-    items.push(item);
+    // let item = req.body.newItem;
+    // items.push(item);
+    // res.redirect("/");
+
+    const itemName = req.body.newItem;
+    const item = new Item({
+        name: itemName
+    });
+    
+    item.save();
     res.redirect("/");
 });
 
