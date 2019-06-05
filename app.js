@@ -84,11 +84,28 @@ app.post("/", (req, res) => {
     const item = new Item({
         name: itemName
     });
-    
+
     item.save();
     res.redirect("/");
 });
 
+app.post("/delete", (req, res) => {
+
+    const checkedItemId = req.body.checkbox;
+
+    console.log(checkedItemId);
+
+    Item.findByIdAndRemove(checkedItemId, function (err) {
+        if (!err) {
+            console.log("Successfully deleted item ...");
+            res.redirect("/");
+        } else {
+            console.log(err);
+        }
+        
+      });
+
+});
 app.listen(5000, () => {
     console.log("server started on port 3000 ...")
 });
